@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>My First Full Stack App</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 700px;
+      margin: 60px auto;
+      padding: 20px;
+      line-height: 1.5;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 100px;
+      padding: 10px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+
+    button {
+      margin-top: 10px;
+      padding: 10px 16px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    #result {
+      margin-top: 20px;
+      padding: 15px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background: #f7f7f7;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>My First Full Stack App</h1>
+
+  <p>Type a message and send it to the backend.</p>
+
+  <textarea id="messageBox"
+    placeholder="Type something here..."></textarea>
+
+  <br>
+
+  <button onclick="sendMessage()">Send to Backend</button>
+
+  <div id="result">
+    Waiting...
+  </div>
+
+  <script>
+
+async function sendMessage() {
+
+  const backendURL =
+    "https://vicky-backend-test.bsundar8.workers.dev/";
+
+  const userMessage =
+    document.getElementById("messageBox").value;
+
+  const resultBox =
+    document.getElementById("result");
+
+  const button =
+    document.querySelector("button");
+
+  // Show loading state immediately
+  resultBox.innerText = "Thinking...";
+  button.disabled = true;
+
+  // Start timer
+  const startTime = performance.now();
+
+  try {
+
+    const response = await fetch(backendURL, {
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json"
+      },
+
+      body: JSON.stringify({
+        message: userMessage
+      })
+    });
+
+    const data = await response.json();
+
+    // Stop timer
+    const endTime = performance.now();
+
+    const totalSeconds =
+      ((endTime - startTime) / 1000).toFixed(2);
+
+    resultBox.innerText =
+      data.response +
+      "\n\nResponse time: " +
+      totalSeconds +
+      " seconds";
+
+  } catch (error) {
+
+    resultBox.innerText =
+      "Something went wrong.\n\n" +
+      error.message;
+
+  } finally {
+
+    button.disabled = false;
+
+  }
+}
+  </script>
+
+</body>
+</html>
